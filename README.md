@@ -1,1 +1,1 @@
-# docker-magento
+sh bootstrap-magento.sh

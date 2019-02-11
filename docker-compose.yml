@@ -1,0 +1,89 @@
+version: '2'
+
+services:
+    proxy:
+        image: nginx:1.13.8
+        container_name: orange_nginx
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+            - ./nginx/includes.d:/etc/nginx/includes.d 
+            - ./nginx/conf.d:/etc/nginx/conf.d
+            - ./nginx/ssl:/etc/nginx/ssl
+            - /storage:/storage
+        networks:
+            - network-back
+
+# #VARNISH
+#     varnish:
+#         image: million12/varnish
+#         container_name: orange_varnish
+#         depends_on:
+#           - proxy
+#         volumes:
+#           - ./varnish/default.vcl:/etc/varnish/default.vcl
+#         ports:
+#           - "80:80"
+#         environment:
+#             - VCL_CONFIG=/etc/varnish/default.vcl
+#         networks:
+#             - network-back
+
+# PHPs
+    php-7:
+      extends:
+        file: php/php.yml
+        service: php-7
+
+    php-5.6:
+      extends:
+        file: php/php.yml
+        service: php-5.6
+
+# Database
+    percona:
+       extends:
+        file: mysql/mysql.yml
+        service: percona
+
+    # mongo:
+    #    extends:
+    #     file: mongo/mongo.yml
+    #     service: mongo
+
+# Tools
+    mailhog:
+      extends:
+        file: tools/tools.yml
+        service: mailhog
+
+    redis:
+      extends:
+        file: tools/tools.yml
+        service: redis
+
+    # sonarqube:
+    #   extends:
+    #     file: tools/tools.yml
+    #     service: sonarqube
+
+    # gearman:
+    #   extends:
+    #     file: tools/tools.yml
+    #     service: gearman
+
+    # elasticsearch:
+    #     image: elasticsearch:latest
+    #     restart: always
+    #     container_name: orange_elastic
+    #     ports:
+    #         - "9200:9200"
+    #         - "9300:9300"
+    #     networks:
+    #         - network-back
+
+# Networks
+networks:
+    network-back:
+        driver: bridge

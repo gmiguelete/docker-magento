@@ -1,0 +1,5 @@
+*
+!.gitignore
+!dev.magento.com.br.conf
+!dev.magento2.com.br.conf
+!dev.silex.com.br.conf

@@ -1,0 +1,16 @@
+version: '2'
+
+services:
+# BASE DE DADOS MySQL 
+    mongo:
+        image: mongo
+        restart: always
+        mem_limit: 3G
+        container_name: orange_mongo
+        ports:
+            - "27017:27017"
+        volumes:
+            - ./data:/data/db
+            - ./config:/data/configdb
+        networks:
+            - network-back

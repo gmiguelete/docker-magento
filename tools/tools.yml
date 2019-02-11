@@ -1,0 +1,48 @@
+version: '2'
+
+services:
+
+#MailHog
+  mailhog:
+    image: mailhog/mailhog:latest
+    restart: always
+    container_name: orange_mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - network-back
+
+#Redis
+  redis:
+    image: redis
+    container_name: orange_redis
+    mem_limit: 3G
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+        - network-back
+
+#SonarQube
+  sonarqube:
+    build: sonarqube
+    container_name: orange_sonarqube
+    restart: always
+    volumes:
+      - /storage:/storage
+    ports:
+      - "9001:9000"
+      - "9092:9092"
+    networks:
+        - network-back
+
+#Gearman
+  gearman:
+    image: artefactual/gearmand:latest
+    container_name: orange_gearman
+    restart: always
+    ports:
+      - "4730:4730"
+    networks:
+        - network-back

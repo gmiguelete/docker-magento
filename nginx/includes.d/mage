@@ -1,0 +1,57 @@
+  location / {
+    try_files $uri $uri/ /index.php$is_args$args;
+  }
+
+  location /status {
+    access_log off;
+    allow 172.17.0.0/16;
+    deny all;
+    include /etc/nginx/fastcgi_params;
+    fastcgi_param SCRIPT_FILENAME /status;
+    fastcgi_pass fastcgi_php_56;
+  }
+
+  location /ping {
+    access_log off;
+    allow all;
+    include fastcgi_params;
+    fastcgi_param SCRIPT_FILENAME /ping;
+    fastcgi_pass fastcgi_php_56;
+  }
+
+  location /api {
+    rewrite ^/api/rest /api.php?type=rest last;
+    rewrite ^/api/v2_soap /api.php?type=v2_soap last;
+    rewrite ^/api/soap /api.php?type=soap last;
+  }
+
+  location ~* \.(js|css|png|jpg|jpeg|gif|ico)$ {
+   expires       max;
+   log_not_found off;
+   access_log    off;
+  }
+
+  location ~ \.php$ {
+    proxy_connect_timeout       999;
+    proxy_send_timeout          999;
+    proxy_read_timeout          999;
+    send_timeout                999;
+    try_files $uri =404;
+    fastcgi_split_path_info ^(.+\.php)(/.+)$;
+    #fastcgi_pass php-5.6:9000;
+    fastcgi_pass fastcgi_php_56;
+    fastcgi_index index.php;
+    fastcgi_read_timeout 9000;
+    include fastcgi_params;
+    if ($STORE_CODE = "") {
+        set $STORE_CODE "";
+    }
+    if ($STORE_TYPE = "") {
+        set $STORE_TYPE "";
+    }
+    # These are set in http.magerunmaps
+    fastcgi_param MAGE_RUN_CODE $STORE_CODE if_not_empty;
+    fastcgi_param MAGE_RUN_TYPE $STORE_TYPE if_not_empty;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    fastcgi_param PATH_INFO $fastcgi_path_info;
+  }

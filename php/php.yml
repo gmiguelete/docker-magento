@@ -1,0 +1,24 @@
+version: '2'
+
+services:
+# PHPs usei o build [diretorios] para instalar libs ;)
+
+    php-7:
+        build: php-fpm-7
+        restart: always
+        mem_limit: 3G
+        container_name: orange_php-7
+        volumes:
+            - /storage:/storage # lembrando de configurar o volumes com a pasta dos seus projetos
+        networks:
+            - network-back
+
+    php-5.6:
+        build: php-fpm-5.6
+        restart: always
+        mem_limit: 3G
+        container_name: orange_php-5.6
+        volumes:
+            - /storage:/storage
+        networks:
+            - network-back
